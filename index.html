@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EYEBALLING | Главная</title>
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <!-- Шапка сайта с логотипом и главным меню -->
+    <header class="site-header sticky-top">
+      <div class="container">
+        <div class="d-flex align-items-center justify-content-between py-2">
+          <a class="d-flex align-items-center text-decoration-none text-dark" href="index.html">
+            <img src="assets/logo.svg" alt="Логотип EYEBALLING" class="logo-icon me-2" />
+            <span class="brand-title">EYEBALLING</span>
+          </a>
+          <nav class="navbar navbar-expand-md p-0">
+            <button
+              class="navbar-toggler"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#mainMenu"
+              aria-controls="mainMenu"
+              aria-expanded="false"
+              aria-label="Переключить меню"
+            >
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="mainMenu">
+              <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link active" href="index.html">Главная</a></li>
+                <li class="nav-item"><a class="nav-link" href="list.html">Журналы</a></li>
+                <li class="nav-item" id="authGuestNav"><a class="nav-link" href="form.html">Войти/Регистрация</a></li>
+                <li class="nav-item d-none" id="authUserNav"><span class="nav-link" id="authUserName"></span></li>
+                <li class="nav-item d-none" id="authLogoutNav"><button class="btn btn-sm btn-outline-dark ms-md-2" id="logoutBtn" type="button">Выйти</button></li>
+              </ul>
+            </div>
+          </nav>
+        </div>
+      </div>
+    </header>
+
+    <main class="py-4">
+      <div class="container">
+        <!-- Главный блок с каруселью изображений -->
+        <section class="mb-5">
+          <div id="heroCarousel" class="carousel slide home-carousel" data-bs-ride="carousel">
+            <div class="carousel-indicators">
+              <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active"></button>
+              <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1"></button>
+              <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2"></button>
+            </div>
+            <div class="carousel-inner">
+              <div class="carousel-item active">
+                <img src="assets/maison-1.png" class="d-block hero-image home-hero-image mx-auto" alt="Maison Margiela образ 1" />
+              </div>
+              <div class="carousel-item">
+                <img src="assets/maison-2.png" class="d-block hero-image home-hero-image mx-auto" alt="Maison Margiela образ 2" />
+              </div>
+              <div class="carousel-item">
+                <img src="assets/maison-3.png" class="d-block hero-image home-hero-image mx-auto" alt="Maison Margiela образ 3" />
+              </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Предыдущий</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Следующий</span>
+            </button>
+          </div>
+          <p class="text-center text-uppercase fs-2 mt-3 mb-0">История бренда Maison Margiela</p>
+        </section>
+
+        <!-- Превью раздела журналов -->
+        <section class="info-card p-4 p-md-5">
+          <div class="row g-4 align-items-center">
+            <div class="col-md-3 text-center">
+              <img src="assets/article-page.png" alt="Обложка MDA Magazine" class="article-cover img-fluid" />
+            </div>
+            <div class="col-md-9">
+              <h2 class="mb-2 text-uppercase">Каталог журналов</h2>
+              <p class="fs-5 mb-2">В разделе собраны разные издания: MDA MAGAZINE, VOGUE AUSTRALIA и BRITISH.</p>
+              <p class="text-muted mb-3">Откройте общий каталог и выберите любой выпуск для чтения по страницам.</p>
+              <a href="list.html" class="btn btn-catalog mt-1">Открыть все журналы</a>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- Футер сайта -->
+    <footer class="site-footer py-3 mt-4">
+      <div class="container d-flex flex-column flex-md-row justify-content-between">
+        <span>© 2026 EYEBALLING</span>
+        <span>Fashion Journal Platform</span>
+      </div>
+    </footer>
+
+    <script src="js/auth-ui.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EYEBALLING | MDA MAGAZINE</title>
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <!-- Шапка сайта -->
+    <header class="site-header sticky-top">
+      <div class="container">
+        <div class="d-flex align-items-center justify-content-between py-2">
+          <a class="d-flex align-items-center text-decoration-none text-dark" href="index.html">
+            <img src="assets/logo.svg" alt="Логотип EYEBALLING" class="logo-icon me-2" />
+            <span class="brand-title">EYEBALLING</span>
+          </a>
+          <nav class="navbar navbar-expand-md p-0">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainMenu">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="mainMenu">
+              <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="index.html">Главная</a></li>
+                <li class="nav-item"><a class="nav-link active" href="list.html">Журналы</a></li>
+                <li class="nav-item" id="authGuestNav"><a class="nav-link" href="form.html">Войти/Регистрация</a></li>
+                <li class="nav-item d-none" id="authUserNav"><span class="nav-link" id="authUserName"></span></li>
+                <li class="nav-item d-none" id="authLogoutNav"><button class="btn btn-sm btn-outline-dark ms-md-2" id="logoutBtn" type="button">Выйти</button></li>
+              </ul>
+            </div>
+          </nav>
+        </div>
+      </div>
+    </header>
+
+    <main class="py-4">
+      <div class="container">
+        <!-- Детальная страница журнала в формате онлайн-книги -->
+        <article class="detail-card p-3 p-md-4">
+          <h1 class="text-center text-uppercase mb-4">MDA MAGAZINE</h1>
+          <div class="row g-3">
+            <!-- Левая колонка со всеми страницами -->
+            <aside class="col-lg-3">
+              <h2 class="h5 mb-3">Страницы журнала</h2>
+              <div id="bookThumbnails" class="book-thumbnails"></div>
+            </aside>
+
+            <!-- Основной просмотр текущей страницы -->
+            <section class="col-lg-9 book-main-column">
+              <div class="book-reader p-2 p-md-3">
+                <img id="bookMainImage" src="" alt="Текущая страница MDA Magazine" class="book-main-image img-fluid rounded-2" />
+              </div>
+              <!-- Панель управления: стрелки и номер страницы по центру -->
+              <div class="book-controls d-flex align-items-center justify-content-between mt-4">
+                <button id="prevPage" class="btn btn-brand" type="button">Предыдущая</button>
+                <span id="pageIndicator" class="fw-bold">Страница 1 / 1</span>
+                <button id="nextPage" class="btn btn-brand" type="button">Следующая</button>
+              </div>
+            </section>
+          </div>
+        </article>
+      </div>
+    </main>
+
+    <!-- Футер сайта -->
+    <footer class="site-footer py-3 mt-4">
+      <div class="container d-flex flex-column flex-md-row justify-content-between">
+        <span>© 2026 EYEBALLING</span>
+        <span><a class="text-decoration-none text-muted" href="list.html">Назад к списку</a></span>
+      </div>
+    </footer>
+
+    <script>
+      // Массив страниц журнала MDA MAGAZINE
+      const bookPages = [
+        "assets/mda-pages/photo_2026-03-26_21.53.57-0ec3f837-9ce1-43fa-9a63-a0c215595852.png",
+        "assets/mda-pages/photo_2026-03-26_21.54.00-7f19a244-2b0d-4c5a-a1f2-522cca06714d.png",
+        "assets/mda-pages/photo_2026-03-26_21.54.01-d2118641-2bbf-4eef-807b-854d822d2f08.png",
+        "assets/mda-pages/photo_2026-03-26_21.54.02-96cc9eca-2c76-4edd-b11b-f0a181967d31.png",
+        "assets/mda-pages/photo_2026-03-26_21.54.03-ac48c259-af05-472b-943f-263ccd475ca9.png",
+        "assets/mda-pages/photo_2026-03-26_21.54.04-955077fe-9eff-49e1-a93d-0819a9556ad6.png",
+        "assets/mda-pages/photo_2026-03-26_21.54.04__1_-71c3395c-704a-426c-b93e-9760fd0a1daa.png",
+        "assets/mda-pages/photo_2026-03-26_21.54.05-b49bb8f7-b06b-4a30-9ea0-03fd80ed69b2.png",
+        "assets/mda-pages/photo_2026-03-26_21.54.06-faccf40a-b802-43c9-89c2-6a16b4792154.png",
+        "assets/mda-pages/photo_2026-03-26_21.54.07-38eccebc-3512-4ba1-9ca9-7b66f8fa3354.png",
+        "assets/mda-pages/photo_2026-03-26_21.54.08-03d30ccd-4df6-4f28-8730-6eaa18b11d64.png",
+        "assets/mda-pages/photo_2026-03-26_21.54.09-998aec8e-0179-498c-9622-a70d89675237.png",
+        "assets/mda-pages/photo_2026-03-26_21.54.10-5b9fcb02-07de-46fe-9881-cf576fbff57a.png",
+        "assets/mda-pages/photo_2026-03-26_21.54.10__1_-f185ddd7-3857-431a-8576-d310549be5a9.png",
+        "assets/mda-pages/photo_2026-03-26_21.54.12-f01c5357-cdcc-4087-8e98-cc85ff98d994.png",
+        "assets/mda-pages/photo_2026-03-26_21.54.13-49de9613-f8a2-4f39-b853-da1eff6703de.png",
+        "assets/mda-pages/photo_2026-03-26_21.54.13__1_-0625fc7f-99ab-4317-9caf-eaf47d13681a.png",
+        "assets/mda-pages/photo_2026-03-26_21.54.14-7511aa2e-5bc6-4434-b992-c4538dcb66a9.png",
+        "assets/mda-pages/photo_2026-03-26_21.54.15-06dd2538-28dd-44fd-9b73-710780b3ebb0.png",
+        "assets/mda-pages/photo_2026-03-26_21.54.16-cea1fc99-73f2-4144-b30a-5e2f33edb8e6.png"
+      ];
+
+      const mainImage = document.getElementById("bookMainImage");
+      const pageIndicator = document.getElementById("pageIndicator");
+      const prevPageBtn = document.getElementById("prevPage");
+      const nextPageBtn = document.getElementById("nextPage");
+      const thumbnailsContainer = document.getElementById("bookThumbnails");
+      let currentPage = 0;
+
+      function renderPage(pageIndex) {
+        currentPage = pageIndex;
+        mainImage.src = bookPages[currentPage];
+        mainImage.alt = `Страница ${currentPage + 1} журнала MDA MAGAZINE`;
+        pageIndicator.textContent = `Страница ${currentPage + 1} / ${bookPages.length}`;
+        prevPageBtn.disabled = currentPage === 0;
+        nextPageBtn.disabled = currentPage === bookPages.length - 1;
+
+        const thumbButtons = document.querySelectorAll(".book-thumb-btn");
+        thumbButtons.forEach((button, index) => {
+          button.classList.toggle("active", index === currentPage);
+        });
+      }
+
+      // Рендер миниатюр всех страниц в боковой колонке
+      bookPages.forEach((pageSrc, index) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "book-thumb-btn";
+        button.innerHTML = `<img src="${pageSrc}" loading="lazy" alt="Миниатюра страницы ${index + 1}" /><span>${index + 1}</span>`;
+        button.addEventListener("click", () => renderPage(index));
+        thumbnailsContainer.appendChild(button);
+      });
+
+      prevPageBtn.addEventListener("click", () => {
+        if (currentPage > 0) renderPage(currentPage - 1);
+      });
+
+      nextPageBtn.addEventListener("click", () => {
+        if (currentPage < bookPages.length - 1) renderPage(currentPage + 1);
+      });
+
+      renderPage(0);
+    </script>
+    <script src="js/auth-ui.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

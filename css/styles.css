@@ -1,0 +1,207 @@
+/* Основные переменные сайта */
+:root {
+  --brand-bg: #f4f4f4;
+  --brand-card: #ece8ea;
+  --brand-dark: #131313;
+  --brand-muted: #7a7a7a;
+}
+
+/* Базовые настройки страницы */
+body {
+  background-color: var(--brand-bg);
+  color: var(--brand-dark);
+  font-family: "Arial Narrow", Arial, sans-serif;
+}
+
+/* Шапка сайта */
+.site-header {
+  border-bottom: 1px solid #9e9e9e;
+  background: #f8f8f8;
+}
+
+.brand-title {
+  font-family: "Times New Roman", serif;
+  letter-spacing: 0.08em;
+  font-size: clamp(2rem, 5vw, 4rem);
+}
+
+.logo-icon {
+  width: 58px;
+  height: 40px;
+}
+
+/* Секции контента */
+.hero-card,
+.info-card,
+.form-card,
+.detail-card {
+  background: var(--brand-card);
+  border-radius: 18px;
+}
+
+.hero-image {
+  height: 420px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+/* Узкая карусель на главной, как в макете */
+.home-carousel .carousel-inner {
+  max-width: 320px;
+  margin: 0 auto;
+}
+
+.home-hero-image {
+  width: 100%;
+  height: 520px;
+  object-fit: cover;
+}
+
+/* Режим чтения статьи в формате онлайн-книги */
+.book-reader {
+  background: #f1f1f1;
+  border-radius: 12px;
+  min-height: 640px;
+  height: 640px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.book-main-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.book-main-image {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
+.book-controls {
+  padding: 0 0.25rem;
+}
+
+.book-thumbnails {
+  max-height: 640px;
+  overflow-y: auto;
+  display: grid;
+  gap: 0.5rem;
+  padding-right: 0.35rem;
+}
+
+@media (max-width: 991.98px) {
+  .book-reader {
+    min-height: 460px;
+    height: 460px;
+  }
+}
+
+.book-thumb-btn {
+  border: 1px solid #c6c6c6;
+  background: #fff;
+  border-radius: 8px;
+  display: grid;
+  grid-template-columns: 66px 1fr;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem;
+  text-align: left;
+}
+
+.book-thumb-btn img {
+  width: 66px;
+  height: 42px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.book-thumb-btn.active {
+  border-color: #111;
+  box-shadow: inset 0 0 0 1px #111;
+}
+
+.article-cover {
+  width: 110px;
+  border-radius: 8px;
+}
+
+/* Карточки списка */
+.mag-card {
+  border: 0;
+  background: #efefef;
+  border-radius: 12px;
+}
+
+.mag-card img {
+  height: 360px;
+  object-fit: contain;
+  background: #ffffff;
+  padding: 0.35rem;
+  border-radius: 12px;
+}
+
+/* Форма */
+.form-control,
+.form-select {
+  border-radius: 0;
+}
+
+#authTabs .nav-link {
+  border-radius: 0;
+  border: 1px solid #cfcfcf;
+  color: var(--brand-dark);
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+#authTabs .nav-link.active {
+  background: var(--brand-dark);
+  border-color: var(--brand-dark);
+  color: #fff;
+}
+
+.btn-brand {
+  background: #fff;
+  border: 2px solid var(--brand-dark);
+  color: var(--brand-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 700;
+}
+
+.btn-brand:hover {
+  background: var(--brand-dark);
+  color: #fff;
+}
+
+.btn-catalog {
+  background: var(--brand-dark);
+  border: 2px solid var(--brand-dark);
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 700;
+  padding: 0.65rem 1.25rem;
+}
+
+.btn-catalog:hover {
+  background: #fff;
+  color: var(--brand-dark);
+}
+
+#authUserName {
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+/* Футер */
+.site-footer {
+  border-top: 1px solid #b8b8b8;
+  color: var(--brand-muted);
+  font-size: 0.95rem;
+}

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 80" role="img" aria-label="Eyeballing logo">
+  <rect width="120" height="80" fill="none"/>
+  <path d="M10 40C25 20 42 10 60 10C78 10 95 20 110 40C95 60 78 70 60 70C42 70 25 60 10 40Z" fill="none" stroke="#111" stroke-width="5"/>
+  <circle cx="60" cy="40" r="13" fill="#111"/>
+  <circle cx="56" cy="36" r="4" fill="#f4f4f4"/>
+  <path d="M20 19L10 8M35 13L30 2M50 10V0M70 10L75 0M85 13L95 2M100 19L112 8" stroke="#111" stroke-width="4" stroke-linecap="round"/>
+</svg>
