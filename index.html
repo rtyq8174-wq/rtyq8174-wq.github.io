@@ -3,6 +3,16 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Веб-аналитика Google Analytics 4: замените G-XXXXXXXXXX на свой Measurement ID в консоли GA -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+      gtag("config", "G-XXXXXXXXXX");
+    </script>
     <title>EYEBALLING | Главная</title>
     <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
     <link
@@ -93,8 +103,50 @@
             </div>
           </div>
         </section>
+
+        <!-- Форма обратной связи (обрабатывается в script.js) -->
+        <section class="info-card p-4 p-md-5 mt-4" id="feedbackSection">
+          <h2 class="h3 text-center text-uppercase mb-4">Обратная связь</h2>
+          <form id="feedbackForm" class="mx-auto" style="max-width: 520px" novalidate>
+            <div class="mb-3">
+              <label for="feedbackName" class="form-label">Имя <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" id="feedbackName" name="name" required placeholder="Ваше имя" />
+            </div>
+            <div class="mb-3">
+              <label for="feedbackEmail" class="form-label">Email <span class="text-danger">*</span></label>
+              <input type="email" class="form-control" id="feedbackEmail" name="email" required placeholder="name@example.com" />
+            </div>
+            <div class="mb-3">
+              <label for="feedbackPhone" class="form-label">Мобильный телефон <span class="text-danger">*</span></label>
+              <input type="tel" class="form-control" id="feedbackPhone" name="phone" required placeholder="+7 999 123-45-67" />
+            </div>
+            <div class="mb-4">
+              <label for="feedbackMessage" class="form-label">Сообщение <span class="text-danger">*</span></label>
+              <textarea class="form-control" id="feedbackMessage" name="message" rows="4" required placeholder="Ваш вопрос или предложение"></textarea>
+            </div>
+            <div class="d-grid">
+              <button type="submit" class="btn btn-brand">Отправить</button>
+            </div>
+          </form>
+        </section>
       </div>
     </main>
+
+    <!-- Модальное окно результата отправки формы (Bootstrap Modal) -->
+    <div class="modal fade" id="feedbackResultModal" tabindex="-1" aria-labelledby="feedbackModalTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="feedbackModalTitle">Результат</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+          </div>
+          <div class="modal-body" id="feedbackModalBody"></div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- Футер сайта -->
     <footer class="site-footer py-3 mt-4">
@@ -104,7 +156,10 @@
       </div>
     </footer>
 
-    <script src="js/auth-ui.js"></script>
+    <!-- jQuery — внешняя JS-библиотека; Bootstrap — UI и Modal -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/auth-ui.js"></script>
+    <script src="script.js"></script>
   </body>
 </html>
