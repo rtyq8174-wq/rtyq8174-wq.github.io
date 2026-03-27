@@ -93,7 +93,10 @@
                     </div>
                     <div class="mb-3">
                       <label for="registerEmail" class="form-label">Email <span class="text-danger">*</span></label>
-                      <input type="email" class="form-control" id="registerEmail" name="email" placeholder="me@eyeballing.com" required autocomplete="email" />
+                      <input type="email" class="form-control" id="registerEmail" name="email" placeholder="name@mail.ru" required autocomplete="email" />
+                      <div class="form-text">
+                        После символа @ домен — только латинские буквы, части разделяются точками (например, mail.ru, gmail.com). Цифры и другие символы в домене недопустимы.
+                      </div>
                     </div>
                     <div class="mb-3">
                       <label for="registerPassword" class="form-label">Пароль <span class="text-danger">*</span></label>
@@ -165,9 +168,24 @@
         localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
       }
 
-      /** Проверка email при регистрации */
+      /**
+       * Email при регистрации: после @ каждая метка домена (между точками) — только латинские буквы.
+       */
       function isValidRegisterEmail(value) {
-        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value).trim());
+        const s = String(value).trim();
+        const at = s.indexOf("@");
+        if (at <= 0 || at === s.length - 1) return false;
+        const local = s.slice(0, at);
+        const domain = s.slice(at + 1);
+        if (!local || !domain) return false;
+        if (!/^[a-zA-Z0-9._+-]+$/.test(local)) return false;
+        const parts = domain.split(".");
+        if (parts.length < 2) return false;
+        for (let i = 0; i < parts.length; i++) {
+          const part = parts[i];
+          if (!part.length || !/^[a-zA-Z]+$/.test(part)) return false;
+        }
+        return true;
       }
 
       /** Пароль: минимум 6 символов, есть буква (латиница/кириллица) и есть цифра */
@@ -197,7 +215,9 @@
           return;
         }
         if (!isValidRegisterEmail(emailRaw)) {
-          alert("Введите корректный адрес электронной почты.");
+          alert(
+            "Введите корректный email: после @ домен должен состоять только из латинских букв, разделённых точками (например, user@mail.ru или name@gmail.com). Цифры и другие символы в домене недопустимы."
+          );
           return;
         }
         if (!password) {
