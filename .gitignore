@@ -2,3 +2,5 @@
 *.log
 .env
 node_modules/
+# Локальные учётные данные БД (используйте config.example.php)
+config.php

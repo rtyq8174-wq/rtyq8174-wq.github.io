@@ -38,7 +38,7 @@
     modal.show();
   }
 
-  /** Обработка формы обратной связи (onSubmit) */
+  /** Обработка формы обратной связи: проверка в браузере + отправка на save_feedback.php (ЛР №4) */
   function initFeedbackForm() {
     const form = document.getElementById("feedbackForm");
     if (!form) return;
@@ -79,13 +79,38 @@
         return;
       }
 
-      console.log("Форма обратной связи: данные успешно обработаны", data);
-      showFeedbackModal(true, "Спасибо! Ваше сообщение принято и будет рассмотрено редакцией.");
-      form.reset();
+      const body = new FormData();
+      body.append("name", data.name);
+      body.append("email", data.email);
+      body.append("phone", data.phone);
+      body.append("message", data.message);
+
+      fetch("save_feedback.php", { method: "POST", body: body })
+        .then(function (res) {
+          return res.json().catch(function () {
+            return { ok: false, message: "Ошибка ответа сервера." };
+          });
+        })
+        .then(function (json) {
+          console.log("Форма обратной связи: ответ сервера", json);
+          if (json.ok) {
+            showFeedbackModal(true, json.message || "Сообщение сохранено.");
+            form.reset();
+          } else {
+            showFeedbackModal(false, json.message || "Не удалось сохранить сообщение.");
+          }
+        })
+        .catch(function (err) {
+          console.log("Форма обратной связи: сеть или сервер", err);
+          showFeedbackModal(
+            false,
+            "Не удалось связаться с сервером. Убедитесь, что сайт открыт через MAMP (PHP), а не как файл с диска."
+          );
+        });
     });
   }
 
-  /** Поиск по списку журналов (страница list.html) */
+  /** Поиск по списку журналов (страница list.php) */
   function initMagazineSearch() {
     const input = document.getElementById("listSearch");
     const items = document.querySelectorAll(".magazine-item");

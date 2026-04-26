@@ -37,7 +37,7 @@
             <div class="collapse navbar-collapse" id="mainMenu">
               <ul class="navbar-nav ms-auto">
                 <li class="nav-item"><a class="nav-link" href="index.html">Главная</a></li>
-                <li class="nav-item"><a class="nav-link" href="list.html">Журналы</a></li>
+                <li class="nav-item"><a class="nav-link" href="list.php">Журналы</a></li>
                 <li class="nav-item" id="authGuestNav"><a class="nav-link" href="form.html">Войти/Регистрация</a></li>
                 <li class="nav-item d-none" id="authUserNav"><span class="nav-link" id="authUserName"></span></li>
                 <li class="nav-item d-none" id="authLogoutNav"><button class="btn btn-sm btn-outline-dark ms-md-2" id="logoutBtn" type="button">Выйти</button></li>
@@ -86,22 +86,48 @@
 
                 <!-- Форма регистрации -->
                 <div class="tab-pane fade" id="register-pane" role="tabpanel" aria-labelledby="register-tab" tabindex="0">
-                  <form id="registerForm" action="#" method="post">
+                  <form id="registerForm" action="#" method="post" novalidate>
                     <div class="mb-3">
-                      <label for="registerName" class="form-label">Имя</label>
-                      <input type="text" class="form-control" id="registerName" placeholder="Ваше имя" required />
+                      <label for="registerName" class="form-label">Имя <span class="text-danger">*</span></label>
+                      <input type="text" class="form-control" id="registerName" name="name" placeholder="Ваше имя" required autocomplete="name" />
                     </div>
                     <div class="mb-3">
-                      <label for="registerEmail" class="form-label">Email</label>
-                      <input type="email" class="form-control" id="registerEmail" placeholder="me@eyeballing.com" required />
+                      <label for="registerEmail" class="form-label">Email <span class="text-danger">*</span></label>
+                      <input type="email" class="form-control" id="registerEmail" name="email" placeholder="name@mail.ru" required autocomplete="email" />
+                      <div class="form-text">
+                        После символа @ домен — только латинские буквы, части разделяются точками (например, mail.ru, gmail.com). Цифры и другие символы в домене недопустимы.
+                      </div>
                     </div>
                     <div class="mb-3">
-                      <label for="registerPassword" class="form-label">Пароль</label>
-                      <input type="password" class="form-control" id="registerPassword" minlength="6" placeholder="минимум 6 символов" required />
+                      <label for="registerPassword" class="form-label">Пароль <span class="text-danger">*</span></label>
+                      <input
+                        type="password"
+                        class="form-control"
+                        id="registerPassword"
+                        name="password"
+                        minlength="6"
+                        placeholder="Буквы и цифры, минимум 6 символов"
+                        required
+                        autocomplete="new-password"
+                      />
+                      <div class="form-text">Пароль должен содержать хотя бы одну букву (латиницу или кириллицу) и хотя бы одну цифру.</div>
+                    </div>
+                    <div class="mb-3">
+                      <label for="registerPasswordConfirm" class="form-label">Подтверждение пароля <span class="text-danger">*</span></label>
+                      <input
+                        type="password"
+                        class="form-control"
+                        id="registerPasswordConfirm"
+                        name="passwordConfirm"
+                        placeholder="Повторите пароль"
+                        required
+                        autocomplete="new-password"
+                      />
                     </div>
                     <div class="mb-4">
-                      <label for="registerRole" class="form-label">Роль</label>
-                      <select id="registerRole" class="form-select">
+                      <label for="registerRole" class="form-label">Роль <span class="text-danger">*</span></label>
+                      <select id="registerRole" name="role" class="form-select" required>
+                        <option value="">Выберите роль</option>
                         <option>Читатель</option>
                         <option>Редактор</option>
                         <option>Администратор</option>
@@ -142,12 +168,76 @@
         localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
       }
 
+      /**
+       * Email при регистрации: после @ каждая метка домена (между точками) — только латинские буквы.
+       */
+      function isValidRegisterEmail(value) {
+        const s = String(value).trim();
+        const at = s.indexOf("@");
+        if (at <= 0 || at === s.length - 1) return false;
+        const local = s.slice(0, at);
+        const domain = s.slice(at + 1);
+        if (!local || !domain) return false;
+        if (!/^[a-zA-Z0-9._+-]+$/.test(local)) return false;
+        const parts = domain.split(".");
+        if (parts.length < 2) return false;
+        for (let i = 0; i < parts.length; i++) {
+          const part = parts[i];
+          if (!part.length || !/^[a-zA-Z]+$/.test(part)) return false;
+        }
+        return true;
+      }
+
+      /** Пароль: минимум 6 символов, есть буква (латиница/кириллица) и есть цифра */
+      function isValidRegisterPassword(value) {
+        const pwd = String(value);
+        if (pwd.length < 6) return false;
+        const hasLetter = /[a-zA-Zа-яА-ЯёЁ]/.test(pwd);
+        const hasDigit = /\d/.test(pwd);
+        return hasLetter && hasDigit;
+      }
+
       document.getElementById("registerForm").addEventListener("submit", (event) => {
         event.preventDefault();
         const name = document.getElementById("registerName").value.trim();
-        const email = document.getElementById("registerEmail").value.trim().toLowerCase();
+        const emailRaw = document.getElementById("registerEmail").value.trim();
+        const email = emailRaw.toLowerCase();
         const password = document.getElementById("registerPassword").value;
-        const role = document.getElementById("registerRole").value;
+        const passwordConfirm = document.getElementById("registerPasswordConfirm").value;
+        const role = document.getElementById("registerRole").value.trim();
+
+        if (!name) {
+          alert("Укажите имя.");
+          return;
+        }
+        if (!emailRaw) {
+          alert("Укажите email.");
+          return;
+        }
+        if (!isValidRegisterEmail(emailRaw)) {
+          alert(
+            "Введите корректный email: после @ домен должен состоять только из латинских букв, разделённых точками (например, user@mail.ru или name@gmail.com). Цифры и другие символы в домене недопустимы."
+          );
+          return;
+        }
+        if (!password) {
+          alert("Укажите пароль.");
+          return;
+        }
+        if (!isValidRegisterPassword(password)) {
+          alert(
+            "Пароль должен быть не короче 6 символов и содержать хотя бы одну букву и хотя бы одну цифру."
+          );
+          return;
+        }
+        if (password !== passwordConfirm) {
+          alert("Пароли не совпадают. Введите одинаковые значения в полях «Пароль» и «Подтверждение пароля».");
+          return;
+        }
+        if (!role) {
+          alert("Выберите роль.");
+          return;
+        }
 
         const users = getUsers();
         const exists = users.some((user) => user.email === email);

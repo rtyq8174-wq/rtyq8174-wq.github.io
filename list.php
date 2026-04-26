@@ -1,3 +1,16 @@
+<?php
+declare(strict_types=1);
+
+require_once __DIR__ . "/script.php";
+
+$dbError = null;
+$magazines = [];
+try {
+    $magazines = getMagazines();
+} catch (Throwable $e) {
+    $dbError = "Не удалось подключиться к базе данных. Импортируйте sql/schema.sql в phpMyAdmin и проверьте config.php (порт MySQL в MAMP).";
+}
+?>
 <!doctype html>
 <html lang="ru">
   <head>
@@ -37,7 +50,7 @@
             <div class="collapse navbar-collapse" id="mainMenu">
               <ul class="navbar-nav ms-auto">
                 <li class="nav-item"><a class="nav-link" href="index.html">Главная</a></li>
-                <li class="nav-item"><a class="nav-link active" href="list.html">Журналы</a></li>
+                <li class="nav-item"><a class="nav-link active" href="list.php">Журналы</a></li>
                 <li class="nav-item" id="authGuestNav"><a class="nav-link" href="form.html">Войти/Регистрация</a></li>
                 <li class="nav-item d-none" id="authUserNav"><span class="nav-link" id="authUserName"></span></li>
                 <li class="nav-item d-none" id="authLogoutNav"><button class="btn btn-sm btn-outline-dark ms-md-2" id="logoutBtn" type="button">Выйти</button></li>
@@ -50,8 +63,11 @@
 
     <main class="py-4">
       <div class="container">
-        <!-- Заголовок страницы списка -->
         <h1 class="text-center text-uppercase mb-4">Список журналов / статей</h1>
+
+        <?php if ($dbError !== null) : ?>
+          <div class="alert alert-warning" role="alert"><?php echo htmlspecialchars($dbError, ENT_QUOTES, "UTF-8"); ?></div>
+        <?php endif; ?>
 
         <!-- Поиск по списку (фильтрация в script.js) -->
         <div class="row justify-content-center mb-4">
@@ -61,44 +77,33 @@
           </div>
         </div>
 
-        <!-- Список карточек журналов -->
+        <!-- Список карточек журналов из базы данных (foreach) -->
         <div class="row g-4" id="magazineList">
-          <div class="col-md-4 magazine-item" data-search="vogue australia march 2020">
-            <div class="card mag-card h-100">
-              <img src="assets/vogue-pages/page-001.webp" class="card-img-top" alt="Vogue Australia March 2020" />
-              <div class="card-body text-center">
-                <h5 class="card-title">VOGUE AUSTRALIA MARCH 2020</h5>
-                <a href="vogue.html" class="btn btn-sm btn-brand">Подробнее</a>
+          <?php foreach ($magazines as $item) : ?>
+            <?php
+            $title = htmlspecialchars((string) $item["title"], ENT_QUOTES, "UTF-8");
+            $href = htmlspecialchars((string) $item["href"], ENT_QUOTES, "UTF-8");
+            $cover = htmlspecialchars((string) $item["cover_image"], ENT_QUOTES, "UTF-8");
+            $dataSearch = htmlspecialchars((string) $item["data_search"], ENT_QUOTES, "UTF-8");
+            ?>
+            <div class="col-md-4 magazine-item" data-search="<?php echo $dataSearch; ?>">
+              <div class="card mag-card h-100">
+                <img src="<?php echo $cover; ?>" class="card-img-top" alt="<?php echo $title; ?>" />
+                <div class="card-body text-center">
+                  <h5 class="card-title"><?php echo $title; ?></h5>
+                  <a href="<?php echo $href; ?>" class="btn btn-sm btn-brand">Подробнее</a>
+                </div>
               </div>
             </div>
-          </div>
-          <div class="col-md-4 magazine-item" data-search="british 3 2020">
-            <div class="card mag-card h-100">
-              <img src="assets/british-pages/page-001.webp" class="card-img-top" alt="BRITISH 3 2020" />
-              <div class="card-body text-center">
-                <h5 class="card-title">BRITISH 3 2020</h5>
-                <a href="british.html" class="btn btn-sm btn-brand">Подробнее</a>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-4 magazine-item" data-search="mda magazine">
-            <div class="card mag-card h-100">
-              <img src="assets/mda-pages/photo_2026-03-26_21.53.57-0ec3f837-9ce1-43fa-9a63-a0c215595852.png" class="card-img-top" alt="MDA Magazine" />
-              <div class="card-body text-center">
-                <h5 class="card-title">MDA MAGAZINE</h5>
-                <a href="item.html" class="btn btn-sm btn-brand">Подробнее</a>
-              </div>
-            </div>
-          </div>
+          <?php endforeach; ?>
         </div>
       </div>
     </main>
 
-    <!-- Футер сайта -->
     <footer class="site-footer py-3 mt-4">
       <div class="container d-flex flex-column flex-md-row justify-content-between">
         <span>© 2026 EYEBALLING</span>
-        <span>3 журнала в каталоге</span>
+        <span><?php echo count($magazines); ?> журнал(ов) в каталоге</span>
       </div>
     </footer>
 
