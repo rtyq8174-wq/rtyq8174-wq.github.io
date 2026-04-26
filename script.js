@@ -1,10 +1,12 @@
 /**
  * Лабораторная работа №3: динамика DOM, обработка формы, фильтрация списка.
- * Подключён ко всем страницам сайта.
+ * Лабораторная работа №5: обратная связь через jQuery Ajax → ajax.php (GET / POST).
  */
 
 (function () {
   "use strict";
+
+  var FEEDBACK_AJAX_URL = "ajax.php";
 
   /** Простая проверка email */
   function isValidEmail(value) {
@@ -27,7 +29,7 @@
     const titleEl = document.getElementById("feedbackModalTitle");
     const bodyEl = document.getElementById("feedbackModalBody");
     if (!modalEl || !titleEl || !bodyEl || typeof bootstrap === "undefined") {
-      alert(message);
+      window.alert(message);
       return;
     }
     titleEl.textContent = ok ? "Сообщение отправлено" : "Ошибка в данных";
@@ -38,10 +40,77 @@
     modal.show();
   }
 
-  /** Обработка формы обратной связи: проверка в браузере + отправка на save_feedback.php (ЛР №4) */
+  /** Безопасная отрисовка строк таблицы (только textContent) */
+  function renderFeedbackList(items) {
+    const tbody = document.getElementById("feedbackAjaxList");
+    if (!tbody) return;
+
+    while (tbody.firstChild) {
+      tbody.removeChild(tbody.firstChild);
+    }
+
+    if (!items || !items.length) {
+      const tr = document.createElement("tr");
+      const td = document.createElement("td");
+      td.colSpan = 6;
+      td.className = "text-muted text-center py-4";
+      td.textContent = "Пока нет сообщений.";
+      tr.appendChild(td);
+      tbody.appendChild(tr);
+      return;
+    }
+
+    items.forEach(function (row) {
+      const tr = document.createElement("tr");
+      ["id", "created_at", "name", "email", "phone", "message"].forEach(function (key) {
+        const td = document.createElement("td");
+        td.textContent = row[key] != null ? String(row[key]) : "";
+        tr.appendChild(td);
+      });
+      tbody.appendChild(tr);
+    });
+  }
+
+  /** GET ajax.php — полный список сообщений из БД */
+  function loadFeedbackList() {
+    if (typeof window.jQuery === "undefined") return;
+
+    window.jQuery.get(FEEDBACK_AJAX_URL, function (json) {
+      if (json && json.ok && Array.isArray(json.items)) {
+        renderFeedbackList(json.items);
+      } else {
+        renderFeedbackList([]);
+        if (json && json.message) {
+          console.log("Ajax GET:", json.message);
+        }
+      }
+    }, "json").fail(function (xhr, status, err) {
+      console.log("Ajax GET: ошибка сети или сервера", status, err);
+      renderFeedbackList([]);
+    });
+  }
+
+  /** Кнопка «Обновить список» и таймер 60 с (только на главной, если есть блок) */
+  function initFeedbackAjaxBlock() {
+    const tbody = document.getElementById("feedbackAjaxList");
+    const btn = document.getElementById("feedbackAjaxRefreshBtn");
+    if (!tbody || typeof window.jQuery === "undefined") return;
+
+    loadFeedbackList();
+
+    if (btn) {
+      btn.addEventListener("click", function () {
+        loadFeedbackList();
+      });
+    }
+
+    window.setInterval(loadFeedbackList, 60000);
+  }
+
+  /** Обработка формы обратной связи: валидация + jQuery POST → ajax.php (ЛР №5) */
   function initFeedbackForm() {
     const form = document.getElementById("feedbackForm");
-    if (!form) return;
+    if (!form || typeof window.jQuery === "undefined") return;
 
     form.addEventListener("submit", function (event) {
       event.preventDefault();
@@ -79,34 +148,24 @@
         return;
       }
 
-      const body = new FormData();
-      body.append("name", data.name);
-      body.append("email", data.email);
-      body.append("phone", data.phone);
-      body.append("message", data.message);
-
-      fetch("save_feedback.php", { method: "POST", body: body })
-        .then(function (res) {
-          return res.json().catch(function () {
-            return { ok: false, message: "Ошибка ответа сервера." };
-          });
-        })
-        .then(function (json) {
-          console.log("Форма обратной связи: ответ сервера", json);
-          if (json.ok) {
-            showFeedbackModal(true, json.message || "Сообщение сохранено.");
-            form.reset();
-          } else {
-            showFeedbackModal(false, json.message || "Не удалось сохранить сообщение.");
+      window.jQuery.post(FEEDBACK_AJAX_URL, data, function (json) {
+        console.log("Форма обратной связи: ответ сервера", json);
+        if (json && json.ok) {
+          showFeedbackModal(true, json.message || "Сообщение сохранено.");
+          form.reset();
+          if (Array.isArray(json.items)) {
+            renderFeedbackList(json.items);
           }
-        })
-        .catch(function (err) {
-          console.log("Форма обратной связи: сеть или сервер", err);
-          showFeedbackModal(
-            false,
-            "Не удалось связаться с сервером. Убедитесь, что сайт открыт через MAMP (PHP), а не как файл с диска."
-          );
-        });
+        } else {
+          showFeedbackModal(false, (json && json.message) || "Не удалось сохранить сообщение.");
+        }
+      }, "json").fail(function (xhr, status, err) {
+        console.log("Форма обратной связи: сеть или сервер", status, err);
+        showFeedbackModal(
+          false,
+          "Не удалось связаться с сервером. Убедитесь, что сайт открыт через MAMP (PHP), а не как файл с диска."
+        );
+      });
     });
   }
 
@@ -132,5 +191,6 @@
   document.addEventListener("DOMContentLoaded", function () {
     initFeedbackForm();
     initMagazineSearch();
+    initFeedbackAjaxBlock();
   });
 })();

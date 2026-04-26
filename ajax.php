@@ -1,7 +1,6 @@
 <?php
 /**
- * Сохранение данных формы обратной связи в таблицу feedback_messages (ЛР №4).
- * ЛР №5: для главной страницы используйте ajax.php (POST и полный список в JSON).
+ * Лабораторная работа №5: Ajax — GET (полный список сообщений), POST (сохранение формы + полный список).
  */
 
 declare(strict_types=1);
@@ -10,9 +9,44 @@ require_once __DIR__ . "/script.php";
 
 header("Content-Type: application/json; charset=utf-8");
 
-if ($_SERVER["REQUEST_METHOD"] !== "POST") {
+/**
+ * @return list<array{id:int|string,name:string,email:string,phone:string,message:string,created_at:string}>
+ */
+function ajax_fetch_all_feedback(PDO $pdo): array
+{
+    $sql = "SELECT id, name, email, phone, message,
+                   DATE_FORMAT(created_at, '%Y-%m-%d %H:%i:%s') AS created_at
+            FROM feedback_messages
+            ORDER BY id DESC";
+    $stmt = $pdo->query($sql);
+    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    return $rows === false ? [] : $rows;
+}
+
+$method = $_SERVER["REQUEST_METHOD"] ?? "GET";
+
+if ($method === "GET") {
+    try {
+        $pdo = getDb();
+        $items = ajax_fetch_all_feedback($pdo);
+        echo json_encode(["ok" => true, "items" => $items], JSON_UNESCAPED_UNICODE);
+    } catch (Throwable $e) {
+        http_response_code(500);
+        echo json_encode(
+            [
+                "ok" => false,
+                "message" => "Не удалось загрузить сообщения. Проверьте config.php и таблицу feedback_messages.",
+                "items" => [],
+            ],
+            JSON_UNESCAPED_UNICODE
+        );
+    }
+    exit;
+}
+
+if ($method !== "POST") {
     http_response_code(405);
-    echo json_encode(["ok" => false, "message" => "Метод не разрешён."], JSON_UNESCAPED_UNICODE);
+    echo json_encode(["ok" => false, "message" => "Метод не разрешён.", "items" => []], JSON_UNESCAPED_UNICODE);
     exit;
 }
 
@@ -22,12 +56,12 @@ $phone = trim((string) ($_POST["phone"] ?? ""));
 $message = trim((string) ($_POST["message"] ?? ""));
 
 if ($name === "" || $email === "" || $phone === "" || $message === "") {
-    echo json_encode(["ok" => false, "message" => "Заполните все обязательные поля формы."], JSON_UNESCAPED_UNICODE);
+    echo json_encode(["ok" => false, "message" => "Заполните все обязательные поля формы.", "items" => []], JSON_UNESCAPED_UNICODE);
     exit;
 }
 
 if (!preg_match('/^[^\s@]+@[^\s@]+\.[^\s@]+$/', $email)) {
-    echo json_encode(["ok" => false, "message" => "Укажите корректный адрес электронной почты."], JSON_UNESCAPED_UNICODE);
+    echo json_encode(["ok" => false, "message" => "Укажите корректный адрес электронной почты.", "items" => []], JSON_UNESCAPED_UNICODE);
     exit;
 }
 
@@ -43,6 +77,7 @@ if (!$phoneOk) {
         [
             "ok" => false,
             "message" => "Укажите корректный номер мобильного телефона (например, +79991234567).",
+            "items" => [],
         ],
         JSON_UNESCAPED_UNICODE
     );
@@ -60,6 +95,7 @@ try {
         ":phone" => $phone,
         ":message" => $message,
     ]);
+    $items = ajax_fetch_all_feedback($pdo);
 } catch (Throwable $e) {
     http_response_code(500);
     echo json_encode(
@@ -67,6 +103,7 @@ try {
             "ok" => false,
             "message" =>
                 "Не удалось сохранить сообщение. Проверьте config.php, запуск через MAMP и импорт sql/schema.sql.",
+            "items" => [],
         ],
         JSON_UNESCAPED_UNICODE
     );
@@ -77,6 +114,7 @@ echo json_encode(
     [
         "ok" => true,
         "message" => "Спасибо! Ваше сообщение сохранено и будет рассмотрено редакцией.",
+        "items" => $items,
     ],
     JSON_UNESCAPED_UNICODE
 );
