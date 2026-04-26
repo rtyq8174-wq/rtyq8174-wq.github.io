@@ -65,7 +65,8 @@ try {
     echo json_encode(
         [
             "ok" => false,
-            "message" => "Не удалось сохранить сообщение. Проверьте настройки БД и импорт sql/schema.sql.",
+            "message" =>
+                "Не удалось сохранить сообщение. Проверьте config.php, запуск через MAMP и импорт sql/schema.sql.",
         ],
         JSON_UNESCAPED_UNICODE
     );
