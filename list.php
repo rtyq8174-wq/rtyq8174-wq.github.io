@@ -103,7 +103,7 @@ try {
     <footer class="site-footer py-3 mt-4">
       <div class="container d-flex flex-column flex-md-row justify-content-between">
         <span>© 2026 EYEBALLING</span>
-        <span><?php echo count($magazines); ?> журнал(ов) в каталоге</span>
+        <span><span id="magazineCatalogCount"><?php echo count($magazines); ?></span> журнал(ов) в каталоге</span>
       </div>
     </footer>
 

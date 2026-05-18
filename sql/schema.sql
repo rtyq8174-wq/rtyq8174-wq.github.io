@@ -29,6 +29,18 @@ CREATE TABLE IF NOT EXISTS feedback_messages (
   PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- Зарегистрированные пользователи (регистрация через form.html → register_user.php)
+CREATE TABLE IF NOT EXISTS site_users (
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  name VARCHAR(255) NOT NULL,
+  email VARCHAR(255) NOT NULL,
+  password_hash VARCHAR(255) NOT NULL,
+  role VARCHAR(64) NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  UNIQUE KEY uq_site_users_email (email)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 INSERT INTO magazines (title, href, cover_image, data_search, sort_order) VALUES
   ('VOGUE AUSTRALIA MARCH 2020', 'vogue.html', 'assets/vogue-pages/page-001.webp', 'vogue australia march 2020', 1),
   ('BRITISH 3 2020', 'british.html', 'assets/british-pages/page-001.webp', 'british 3 2020', 2),

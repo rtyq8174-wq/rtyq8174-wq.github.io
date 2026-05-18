@@ -7,6 +7,8 @@
   "use strict";
 
   var FEEDBACK_AJAX_URL = "ajax.php";
+  var MAGAZINES_JSON_URL = "magazines_json.php";
+  var MAGAZINE_LIST_REFRESH_MS = 20000;
 
   /** Простая проверка email */
   function isValidEmail(value) {
@@ -169,15 +171,14 @@
     });
   }
 
-  /** Поиск по списку журналов (страница list.php) */
+  /** Поиск по списку журналов (страница list.php); элементы перезапрашиваются после автообновления каталога */
   function initMagazineSearch() {
     const input = document.getElementById("listSearch");
-    const items = document.querySelectorAll(".magazine-item");
-    if (!input || !items.length) return;
+    if (!input) return;
 
     function filter() {
       const q = input.value.trim().toLowerCase();
-      items.forEach(function (item) {
+      document.querySelectorAll("#magazineList .magazine-item").forEach(function (item) {
         const haystack = (item.getAttribute("data-search") || "").toLowerCase();
         const match = !q || haystack.includes(q);
         item.classList.toggle("d-none", !match);
@@ -188,9 +189,83 @@
     input.addEventListener("change", filter);
   }
 
+  function applyMagazineSearchFilter() {
+    const input = document.getElementById("listSearch");
+    if (!input) return;
+    const q = input.value.trim().toLowerCase();
+    document.querySelectorAll("#magazineList .magazine-item").forEach(function (item) {
+      const haystack = (item.getAttribute("data-search") || "").toLowerCase();
+      const match = !q || haystack.includes(q);
+      item.classList.toggle("d-none", !match);
+    });
+  }
+
+  function buildMagazineCardEl(item) {
+    const col = document.createElement("div");
+    col.className = "col-md-4 magazine-item";
+    col.setAttribute("data-search", item.data_search != null ? String(item.data_search) : "");
+
+    const card = document.createElement("div");
+    card.className = "card mag-card h-100";
+
+    const img = document.createElement("img");
+    img.className = "card-img-top";
+    img.src = item.cover_image != null ? String(item.cover_image) : "";
+    img.alt = item.title != null ? String(item.title) : "";
+
+    const body = document.createElement("div");
+    body.className = "card-body text-center";
+
+    const title = document.createElement("h5");
+    title.className = "card-title";
+    title.textContent = item.title != null ? String(item.title) : "";
+
+    const link = document.createElement("a");
+    link.href = item.href != null ? String(item.href) : "#";
+    link.className = "btn btn-sm btn-brand";
+    link.textContent = "Подробнее";
+
+    body.appendChild(title);
+    body.appendChild(link);
+    card.appendChild(img);
+    card.appendChild(body);
+    col.appendChild(card);
+    return col;
+  }
+
+  /** Каждые 20 с подтягивает каталог из БД и перерисовывает карточки без перезагрузки */
+  function initMagazineCatalogAutoRefresh() {
+    const listRoot = document.getElementById("magazineList");
+    if (!listRoot || typeof window.jQuery === "undefined") return;
+
+    function refresh() {
+      window.jQuery.get(MAGAZINES_JSON_URL, function (json) {
+        if (!json || !json.ok || !Array.isArray(json.items)) return;
+
+        while (listRoot.firstChild) {
+          listRoot.removeChild(listRoot.firstChild);
+        }
+
+        json.items.forEach(function (row) {
+          listRoot.appendChild(buildMagazineCardEl(row));
+        });
+
+        const countEl = document.getElementById("magazineCatalogCount");
+        if (countEl) {
+          countEl.textContent = String(json.items.length);
+        }
+
+        applyMagazineSearchFilter();
+      }, "json");
+    }
+
+    window.setInterval(refresh, MAGAZINE_LIST_REFRESH_MS);
+  }
+
   document.addEventListener("DOMContentLoaded", function () {
     initFeedbackForm();
     initMagazineSearch();
+    initMagazineCatalogAutoRefresh();
     initFeedbackAjaxBlock();
   });
 })();
