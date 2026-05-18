@@ -48,11 +48,10 @@ cp config.example.php config.php
 Файл **`config.php`** в репозиторий не коммитится (см. [.gitignore](.gitignore)). После клона скопируйте `config.example.php` в `config.php` и задайте доступ к MySQL.
 
 ```bash
-cd "/Users/deniszuravlev/Documents/programming uni"
-git add .
-git commit -m "Lab 4: PHP, MySQL, list.php, save_feedback.php"
-git remote add origin https://github.com/ВАШ_ЛОГИН/ИМЯ_РЕПОЗИТОРИЯ.git
-git push -u origin main
+git clone https://github.com/rtyq8174-wq/rtyq8174-wq.github.io.git
+cd rtyq8174-wq.github.io
+cp config.example.php config.php
+# настройте config.php и импортируйте sql/schema.sql в MySQL (MAMP)
 ```
 
 ## Запуск без MAMP (только статика)
